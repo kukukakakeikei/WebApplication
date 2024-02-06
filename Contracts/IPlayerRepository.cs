@@ -12,5 +12,7 @@ namespace Contracts
         Task<List<Player>> GetAllPlayer();
         Task<Player?> GetPlayerById(Guid playerId);
         Task<Player?> GetPlayerWithCharacter(Guid playerId);
+
+        //void CreatePlayer(Player player);
     }
 }

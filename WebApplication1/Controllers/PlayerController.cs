@@ -15,7 +15,7 @@ namespace WebApplication1.Controllers
         private readonly ILogger<PlayerController> _logger;
         private readonly IMapper _mapper;
 
-        public PlayerController(IRepositoryWapper repository, ILogger<PlayerController> logger, IMapper mapper) //构造函数注入仓储包装器和日志
+        public PlayerController(IRepositoryWapper repository, ILogger<PlayerController> logger, IMapper mapper) //构造函数注入仓储包装器、日志和映射
         {
             _repository = repository;
             _logger = logger;
@@ -36,7 +36,7 @@ namespace WebApplication1.Controllers
                 return StatusCode(500);
             }
         }
-        [HttpGet("{id}", Name ="PlayerId")]
+        [HttpGet("{id}", Name = "PlayerById")]
         public async Task<IActionResult> GetPlayerById(Guid id)
         {
             try
@@ -75,5 +75,81 @@ namespace WebApplication1.Controllers
                 return StatusCode(500);
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> CreatePlayer([FromBody] PlayerForCreationDto player)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("无效的请求数据");
+                }
+                var playEntity = _mapper.Map<Player>(player);
+                _repository.Player.Create(playEntity);
+                await _repository.Save();
+
+                var createPlayer = _mapper.Map<PlayerDto>(playEntity);
+                return CreatedAtRoute(routeName: "PlayerById", routeValues: new //调用其他路由返回
+                {
+                    id = createPlayer.Id
+                }, value: createPlayer);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                return StatusCode(500);
+            }
+        }
+        [HttpPut(template: "{id}")]
+        public async Task<IActionResult> UpdatePlayer(Guid id, [FromBody] PlayerForUpdateDto player)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("无效的请求数据");
+                }
+                var playEntity = await _repository.Player.GetPlayerById(id);
+                if (playEntity is null)
+                {
+                    return NotFound("待修改的玩家不存在");
+                }
+                _mapper.Map(player, playEntity);
+                _repository.Player.Update(playEntity);
+                await _repository.Save();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                return StatusCode(500);
+            }
+        }
+        [HttpDelete(template: "{id}")]
+        public async Task<IActionResult> DeletePlayer(Guid id)
+        {
+            try
+            {
+                var player = await _repository.Player.GetPlayerWithCharacter(id);
+                if (player is null)
+                {
+                    return BadRequest("该玩家不存在");
+                }
+                if (player.Characters.Any())
+                {
+                    return NotFound("该玩家有关联人物角色，不能删除！！");
+                }
+                _repository.Player.Delete(player);
+                await _repository.Save();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                return StatusCode(500);
+            }
+        }
+
+
     }
 }

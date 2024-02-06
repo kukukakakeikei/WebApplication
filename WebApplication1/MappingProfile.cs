@@ -11,6 +11,9 @@ namespace WebApplication1
             CreateMap<Player, PlayerDto>(); //映射关系
             CreateMap<Player, PlayerWithCharacterDto>();
             CreateMap<Character, CharacterDto>();
+
+            CreateMap<PlayerForCreationDto, Player>();
+            CreateMap<PlayerForUpdateDto, Player>();
         }
     }
 }

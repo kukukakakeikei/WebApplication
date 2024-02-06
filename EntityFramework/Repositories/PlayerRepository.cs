@@ -16,6 +16,11 @@ namespace EntityFramework.Repositories
 
         }
 
+        public void CreatePlayer(Player player)
+        {
+            Create(player);
+        }
+
         public async Task<List<Player>> GetAllPlayer()
         {
             return await FindAll().OrderBy(player => player.DataCreated).ToListAsync();
