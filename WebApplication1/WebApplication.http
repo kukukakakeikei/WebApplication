@@ -1,0 +1,6 @@
+@WebApplication1_HostAddress = http://localhost:5187
+
+GET {{WebApplication1_HostAddress}}/api/Player/
+Accept: application/json
+
+###
