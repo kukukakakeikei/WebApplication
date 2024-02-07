@@ -2,6 +2,7 @@
 using Contracts;
 using Entites;
 using Entites.Dtos;
+using Entites.ReponseType.DataShaping;
 using EntityFramework.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +38,8 @@ namespace WebApplication1.Controllers
                 var players = await _repository.Player.GetPlayer(parameter);
                 Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(players.MetaData));
 
-                var result = _mapper.Map<IEnumerable<PlayerDto>>(players);//泛型是映射目标→映射数据集
+                var result = _mapper.Map<IEnumerable<PlayerDto>>(players)//泛型是映射目标→映射数据集
+                    .ShapeData(parameter.Fields);  //对结果进行构型
                 return Ok(result);
             }
             catch (Exception ex)
