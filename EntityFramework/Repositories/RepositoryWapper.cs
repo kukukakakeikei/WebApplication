@@ -1,24 +1,23 @@
 ﻿using Contracts;
-using EntityFramework.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityFramework
+namespace EntityFramework.Repositories
 {
-    public class RepositoryWapper: IRepositoryWapper
+    public class RepositoryWapper : IRepositoryWapper
     {
         private readonly WebApplicationDbContext _context;
         private IPlayerRepository _player;
         private ICharacterRepository _character;
 
-        public IPlayerRepository Player 
+        public IPlayerRepository Player
         {
             get { return _player ??= new PlayerRepository(_context); }
         }
-        public ICharacterRepository Character 
+        public ICharacterRepository Character
         {
             get { return _character ??= new CharacterRepository(_context); }
         }
@@ -26,9 +25,9 @@ namespace EntityFramework
         {
             _context = context;
         }
-        public Task<int> Save() 
+        public Task<int> Save()
         {
-            return _context.SaveChangesAsync(); 
+            return _context.SaveChangesAsync();
         }
     }
 }

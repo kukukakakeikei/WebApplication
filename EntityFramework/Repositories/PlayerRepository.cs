@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entites;
 using Entites.ReponseType;
+using EntityFramework.Repositories.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -24,8 +25,11 @@ namespace EntityFramework.Repositories
 
         public async Task<PagedList<Player>> GetPlayer(PlayerParameter parameter)
         {
-            return FindAll()
-                .OrderBy(player => player.DataCreated)
+            return FindByCondtion(player => player.DataCreated.Date >= parameter.MinDataCreated.Date &&
+                                            player.DataCreated.Date <= parameter.MaxDataCreated.Date)
+                .SearchByAccount(parameter.Account)
+                .OrderByQuery(parameter.OrderBy)
+                //.OrderBy(player => player.DataCreated)
                 //.Skip((parameter.PageNumber - 1) * parameter.PageNumber)
                 //.Take(parameter.PageSize)
                 //.ToListAsync();

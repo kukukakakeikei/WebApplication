@@ -27,6 +27,11 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPlayer([FromQuery] PlayerParameter parameter)
         {
+            if (!parameter.ValidDataCreatedRange) 
+            {
+                return BadRequest("开始日期不能大于结束日期！");
+            }
+
             try
             {
                 var players = await _repository.Player.GetPlayer(parameter);
