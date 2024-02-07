@@ -11,6 +11,6 @@ namespace Entites.Dtos
         public Guid Id { get; set; }
         public string Account { get; set; }
         public string AccountType { get; set; }
-        public DateTime DateCreated { get; set; }
+        public DateTime DataCreated { get; set; }
     }
 }

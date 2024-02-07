@@ -2,8 +2,11 @@
 using Contracts;
 using Entites;
 using Entites.Dtos;
+using EntityFramework.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.Json;
+using Newtonsoft.Json;
 
 namespace WebApplication1.Controllers
 {
@@ -22,11 +25,13 @@ namespace WebApplication1.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllPlayer()
+        public async Task<IActionResult> GetPlayer([FromQuery] PlayerParameter parameter)
         {
             try
             {
-                var players = await _repository.Player.GetAllPlayer();
+                var players = await _repository.Player.GetPlayer(parameter);
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(players.MetaData));
+
                 var result = _mapper.Map<IEnumerable<PlayerDto>>(players);//泛型是映射目标→映射数据集
                 return Ok(result);
             }

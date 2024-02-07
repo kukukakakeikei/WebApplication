@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entites;
+using Entites.ReponseType;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,14 @@ namespace EntityFramework.Repositories
             Create(player);
         }
 
-        public async Task<List<Player>> GetAllPlayer()
+        public async Task<PagedList<Player>> GetPlayer(PlayerParameter parameter)
         {
-            return await FindAll().OrderBy(player => player.DataCreated).ToListAsync();
+            return FindAll()
+                .OrderBy(player => player.DataCreated)
+                //.Skip((parameter.PageNumber - 1) * parameter.PageNumber)
+                //.Take(parameter.PageSize)
+                //.ToListAsync();
+                .ToPagedList(parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<Player?> GetPlayerById(Guid playerId)
@@ -35,7 +41,7 @@ namespace EntityFramework.Repositories
         public async Task<Player?> GetPlayerWithCharacter(Guid playerId)
         {
             return await FindByCondtion(player => player.Id == playerId)
-                .Include(player=>player.Characters)
+                .Include(player => player.Characters)
                 .FirstOrDefaultAsync();
         }
     }
